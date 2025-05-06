@@ -1,12 +1,11 @@
-from sqlalchemy import Column, String, Integer, Text
-from sqlalchemy.ext.asyncio import AsyncAttrs
+from sqlalchemy import Column, Integer, String
 from db.database import Base
 
-class Product(AsyncAttrs, Base):
-    __tablename__ = 'products'
-    sku = Column(String(255), primary_key=True)
-    name = Column(Text, nullable=False)
-    category = Column(Text)
-    brand = Column(String(255))
-    rack = Column(String(255))
+class Product(Base):
+    __tablename__ = "products"
+    sku = Column(String, primary_key=True)
+    brand = Column(String)
+    name = Column(String, nullable=False)
+    category = Column(String)
+    rack = Column(String)
     quantity = Column(Integer, default=0)

@@ -1,27 +1,24 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import select
 from db.models import Product
-from dotenv import load_dotenv
 import os
+from dotenv import load_dotenv
 
 load_dotenv()
-DB_URL = os.getenv("DB_URL")
 
-engine = create_async_engine(DB_URL)
-AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+DATABASE_URL = f"postgresql+asyncpg://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
+engine = create_async_engine(DATABASE_URL, echo=True)
+AsyncSessionLocal = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
-# Создание таблиц
-from sqlalchemy import text
+# Создание асинхронного движка
+engine = create_async_engine(DATABASE_URL, echo=True)
+
+# Фабрика сессий
+AsyncSessionLocal = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+
+Base = declarative_base()
 
 async def init_db():
     async with engine.begin() as conn:
-        await conn.execute(text("""
-            CREATE TABLE IF NOT EXISTS products (
-                sku TEXT PRIMARY KEY,
-                name TEXT NOT NULL,
-                category TEXT,
-                brand TEXT,
-                rack TEXT,
-                quantity INTEGER DEFAULT 0
-            );
-        """))
+        await conn.run_sync(Base.metadata.create_all)
