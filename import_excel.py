@@ -1,14 +1,5 @@
 import pandas as pd
-from sqlalchemy import create_engine, text
-from dotenv import load_dotenv
 import os
-
-# Загрузка переменных окружения
-load_dotenv()
-
-# Подключение к БД
-DB_URL = os.getenv("DB_URL")
-engine = create_engine(DB_URL)
 
 # Путь к Excel-файлу и лист
 file_path = "склад сезон 2025.xlsx"
@@ -89,21 +80,8 @@ df['sku'] = df.index.astype(str).str.zfill(6)
 # Переставляем колонки под таблицу products
 df = df[['sku', 'brand', 'name', 'category', 'rack', 'quantity']].copy()
 
-# Удаление старой таблицы и создание новой (если нужно)
-with engine.connect() as conn:
-    conn.execute(text("DROP TABLE IF EXISTS products;"))
-    conn.execute(text("""
-        CREATE TABLE products (
-            sku TEXT PRIMARY KEY,
-            brand TEXT NOT NULL,
-            name TEXT NOT NULL,
-            category TEXT,
-            rack TEXT,
-            quantity INTEGER DEFAULT 0
-        );
-    """))
+# Экспорт в CSV
+output_file = "products.csv"
+df.to_csv(output_file, index=False, encoding='utf-8')
 
-# Сохранение в БД
-df.to_sql("products", engine, if_exists="append", index=False)
-
-print("✅ Данные успешно импортированы в таблицу `products`!")
+print(f"✅ Данные успешно экспортированы в файл {output_file}!")

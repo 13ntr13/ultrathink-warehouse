@@ -6,7 +6,13 @@ class Settings(BaseSettings):
     VERSION: str = "1.0.0"
     API_V1_STR: str = "/api/v1"
     
-    DATABASE_URL: str = "postgresql://postgres:postgres@db:5432/warehouse"
+    # Supabase Configuration
+    SUPABASE_URL: str
+    SUPABASE_KEY: str
+    SUPABASE_SERVICE_KEY: str
+    
+    # Database Configuration
+    DATABASE_URL: str
     
     # JWT settings
     SECRET_KEY: str = "your-secret-key-here"  # В продакшене заменить на безопасный ключ
