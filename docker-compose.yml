@@ -2,26 +2,41 @@ version: '3.8'
 
 services:
   backend:
-    build: ./web/backend
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
+    volumes:
+      - ./backend:/app
     environment:
-      - DATABASE_URL=postgresql://warehouse_user:your_password@db:5432/warehouse_db
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/warehouse
     depends_on:
       - db
-    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
 
   db:
-    image: postgres:16
-    environment:
-      POSTGRES_DB: warehouse_db
-      POSTGRES_USER: warehouse_user
-      POSTGRES_PASSWORD: your_password
+    image: postgres:15
     ports:
       - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=warehouse
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    restart: unless-stopped
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
 
 volumes:
   postgres_data:
