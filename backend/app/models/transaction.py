@@ -3,8 +3,9 @@ from app.models.base import BaseModel
 
 class Transaction(BaseModel):
     __tablename__ = "transactions"
+    __table_args__ = {"schema": "warehouse"}
 
-    product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
+    product_id = Column(Integer, ForeignKey("warehouse.products.id"), nullable=False)
     transaction_type = Column(String, nullable=False)  # "in" или "out"
     quantity = Column(Integer, nullable=False)
     price = Column(Float, nullable=False)

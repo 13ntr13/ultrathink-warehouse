@@ -3,8 +3,9 @@ from app.models.base import BaseModel
 
 class Inventory(BaseModel):
     __tablename__ = "inventory"
+    __table_args__ = {"schema": "warehouse"}
 
-    product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
+    product_id = Column(Integer, ForeignKey("warehouse.products.id"), nullable=False)
     quantity = Column(Integer, nullable=False, default=0)
     location = Column(String)
     last_updated = Column(String)

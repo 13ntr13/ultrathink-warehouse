@@ -16,12 +16,12 @@ services:
 
   frontend:
     build:
-      context: ./frontend
+      context: ./web/frontend
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
     volumes:
-      - ./frontend:/app
+      - ./web/frontend:/app
       - /app/node_modules
     depends_on:
       - backend

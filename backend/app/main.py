@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.db.session import get_db, SessionLocal
 from app.db.init_db import init_db, init_db_data
+from app.api.v1.endpoints import auth
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -20,6 +21,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Подключаем роутеры
+app.include_router(
+    auth.router,
+    prefix=f"{settings.API_V1_STR}/auth",
+    tags=["auth"]
+)
+
 @app.on_event("startup")
 async def startup_event():
     # Инициализация базы данных при запуске
@@ -33,6 +41,10 @@ async def startup_event():
 @app.get("/")
 def read_root():
     return {"message": "Welcome to UltraThink Warehouse API"}
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
 
 @app.get("/db-test")
 async def test_db(db: Session = Depends(get_db)):
