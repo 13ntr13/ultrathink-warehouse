@@ -37,8 +37,8 @@ import { useRouter } from 'vue-router'
 import Card from 'primevue/card'
 import Button from 'primevue/button'
 
-// Пример: роль берём из авторизации
-const userRole = ref('admin') // 'admin', 'manager', 'user'
+// Пример: роль берём из авторизации (по умолчанию – manager)
+const userRole = ref('manager') // 'admin', 'manager', 'user'
 const router = useRouter()
 
 const roleName = computed(() => {

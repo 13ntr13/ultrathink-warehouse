@@ -14,9 +14,25 @@
       <Column header="Права">
         <template #body="slotProps">
           <ul>
-            <li v-for="(value, key) in slotProps.data.permissions" :key="key" v-if="value">
-              {{ key }}
-            </li>
+            <template v-if="slotProps.data.role === 'admin'">
+              <li v-if="slotProps.data.permissions.can_manage_users">Управление пользователями</li>
+              <li v-if="slotProps.data.permissions.can_manage_products">Управление товарами</li>
+              <li v-if="slotProps.data.permissions.can_manage_orders">Управление заказами</li>
+              <li v-if="slotProps.data.permissions.can_view_reports">Просмотр отчётов</li>
+              <li v-if="slotProps.data.permissions.can_manage_settings">Настройки системы</li>
+              <li v-if="slotProps.data.permissions.can_view_logs">Просмотр логов</li>
+            </template>
+            <template v-else-if="slotProps.data.role === 'manager'">
+              <li v-if="slotProps.data.permissions.can_view_products">Просмотр товаров</li>
+              <li v-if="slotProps.data.permissions.can_process_orders">Обработка заказов</li>
+              <li v-if="slotProps.data.permissions.can_create_orders">Создание заказов</li>
+              <li v-if="slotProps.data.permissions.can_view_manager_reports">Просмотр отчётов</li>
+            </template>
+            <template v-else>
+              <li v-if="slotProps.data.permissions.can_view_available_products">Просмотр товаров</li>
+              <li v-if="slotProps.data.permissions.can_create_user_orders">Создание заказов</li>
+              <li v-if="slotProps.data.permissions.can_view_user_orders">Просмотр своих заказов</li>
+            </template>
           </ul>
         </template>
       </Column>
@@ -44,10 +60,22 @@
           <Dropdown id="role" v-model="form.role" :options="roles" optionLabel="label" optionValue="value" placeholder="Выберите роль" required />
         </div>
         <div class="p-field" style="margin-bottom: 1rem;">
-          <label> Права (отметьте права) </label>
-          <div v-for="(value, key) in form.permissions" :key="key" style="margin-top: 0.5rem;">
-            <Checkbox :binary="true" v-model="form.permissions[key]" :label="key" />
-        </div>
+          <label>Права (отметьте права)</label>
+          <template v-if="form.role === 'admin'">
+            <div v-for="(label, key) in adminPermissionLabels" :key="key" style="margin-top: 0.5rem;">
+              <Checkbox :binary="true" v-model="form.permissions[key]" :label="label" />
+            </div>
+          </template>
+          <template v-else-if="form.role === 'manager'">
+            <div v-for="(label, key) in managerPermissionLabels" :key="key" style="margin-top: 0.5rem;">
+              <Checkbox :binary="true" v-model="form.permissions[key]" :label="label" />
+            </div>
+          </template>
+          <template v-else>
+            <div v-for="(label, key) in userPermissionLabels" :key="key" style="margin-top: 0.5rem;">
+              <Checkbox :binary="true" v-model="form.permissions[key]" :label="label" />
+            </div>
+          </template>
         </div>
         <div style="display: flex; justify-content: flex-end; gap: 8px;">
           <Button label="Сохранить" icon="pi pi-check" type="submit" />
@@ -59,7 +87,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import InputText from 'primevue/inputtext'
@@ -74,7 +102,7 @@ import { supabase } from '../supabase'
 const users = ref([])
 const loading = ref(false)
 const showDialog = ref(false)
-const dialogMode = ref('add') // 'add' или 'edit'
+const dialogMode = ref('add')
 const editId = ref(null)
 const toast = useToast()
 
@@ -83,10 +111,117 @@ const roleFilter = ref(null)
 
 const roles = [
   { label: 'Администратор', value: 'admin' },
+  { label: 'Менеджер', value: 'manager' },
   { label: 'Пользователь', value: 'user' }
 ]
 
-const form = ref({ username: '', password: '', role: '', permissions: { can_edit_users: false, can_delete_users: false } })
+// Определение прав и их меток
+const adminPermissionLabels = {
+  can_manage_users: 'Управление пользователями',
+  can_manage_products: 'Управление товарами',
+  can_manage_orders: 'Управление заказами',
+  can_view_reports: 'Просмотр отчётов',
+  can_manage_settings: 'Настройки системы',
+  can_view_logs: 'Просмотр логов'
+}
+
+const managerPermissionLabels = {
+  can_view_products: 'Просмотр товаров',
+  can_process_orders: 'Обработка заказов',
+  can_create_orders: 'Создание заказов',
+  can_view_manager_reports: 'Просмотр отчётов'
+}
+
+const userPermissionLabels = {
+  can_view_available_products: 'Просмотр товаров',
+  can_create_user_orders: 'Создание заказов',
+  can_view_user_orders: 'Просмотр своих заказов'
+}
+
+// Начальное состояние формы
+const form = ref({
+  username: '',
+  password: '',
+  role: '',
+  permissions: {
+    // Права администратора
+    can_manage_users: false,
+    can_manage_products: false,
+    can_manage_orders: false,
+    can_view_reports: false,
+    can_manage_settings: false,
+    can_view_logs: false,
+    // Права менеджера
+    can_view_products: false,
+    can_process_orders: false,
+    can_create_orders: false,
+    can_view_manager_reports: false,
+    // Права пользователя
+    can_view_available_products: false,
+    can_create_user_orders: false,
+    can_view_user_orders: false
+  }
+})
+
+// Функция установки прав по умолчанию
+function setDefaultPermissions(role) {
+  const defaultPermissions = {
+    admin: {
+      can_manage_users: true,
+      can_manage_products: true,
+      can_manage_orders: true,
+      can_view_reports: true,
+      can_manage_settings: true,
+      can_view_logs: true,
+      can_view_products: true,
+      can_process_orders: true,
+      can_create_orders: true,
+      can_view_manager_reports: true,
+      can_view_available_products: true,
+      can_create_user_orders: true,
+      can_view_user_orders: true
+    },
+    manager: {
+      can_manage_users: false,
+      can_manage_products: false,
+      can_manage_orders: true,
+      can_view_reports: false,
+      can_manage_settings: false,
+      can_view_logs: false,
+      can_view_products: true,
+      can_process_orders: true,
+      can_create_orders: true,
+      can_view_manager_reports: true,
+      can_view_available_products: true,
+      can_create_user_orders: true,
+      can_view_user_orders: true
+    },
+    user: {
+      can_manage_users: false,
+      can_manage_products: false,
+      can_manage_orders: false,
+      can_view_reports: false,
+      can_manage_settings: false,
+      can_view_logs: false,
+      can_view_products: false,
+      can_process_orders: false,
+      can_create_orders: false,
+      can_view_manager_reports: false,
+      can_view_available_products: true,
+      can_create_user_orders: true,
+      can_view_user_orders: true
+    }
+  }
+  
+  form.value.permissions = { ...defaultPermissions[role] }
+}
+
+// Следим за изменением роли
+watch(() => form.value.role, (newRole) => {
+  if (newRole) {
+    setDefaultPermissions(newRole)
+  }
+})
 
 onMounted(async () => {
   await fetchUsers()
@@ -116,7 +251,26 @@ const filteredUsers = computed(() => {
 
 function openAddDialog() {
   dialogMode.value = 'add'
-  form.value = { username: '', password: '', role: '', permissions: { can_edit_users: false, can_delete_users: false } }
+  form.value = { 
+    username: '', 
+    password: '', 
+    role: '', 
+    permissions: { 
+      can_manage_users: false,
+      can_manage_products: false,
+      can_manage_orders: false,
+      can_view_reports: false,
+      can_manage_settings: false,
+      can_view_logs: false,
+      can_view_products: false,
+      can_process_orders: false,
+      can_create_orders: false,
+      can_view_manager_reports: false,
+      can_view_available_products: false,
+      can_create_user_orders: false,
+      can_view_user_orders: false
+    } 
+  }
   showDialog.value = true
 }
 
