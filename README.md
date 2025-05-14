@@ -48,6 +48,17 @@ This will start both the frontend and backend servers concurrently.
 - `npm run build` - Builds the app for production
 - `npm test` - Runs the test suite
 
+## 🧩 Shared UI Development
+
+Для локальной разработки и автосборки общего UI-пакета:
+
+```bash
+cd packages/shared-ui
+pnpm run dev
+```
+
+Это запустит tsup в watch-режиме и позволит сразу видеть изменения в vue-app и react-admin.
+
 ## 📝 License
 
 MIT 

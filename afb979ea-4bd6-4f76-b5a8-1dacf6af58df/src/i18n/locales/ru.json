@@ -1,0 +1,97 @@
+{
+  "common": {
+    "dashboard": "Панель управления",
+    "settings": "Настройки",
+    "profile": "Профиль",
+    "logout": "Выйти",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "create": "Создать",
+    "search": "Поиск",
+    "filter": "Фильтр",
+    "sort": "Сортировка",
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "success": "Успешно",
+    "confirm": "Подтвердить",
+    "back": "Назад"
+  },
+  "auth": {
+    "login": "Вход",
+    "register": "Регистрация",
+    "email": "Email",
+    "password": "Пароль",
+    "forgotPassword": "Забыли пароль?",
+    "rememberMe": "Запомнить меня"
+  },
+  "dashboard": {
+    "welcome": "Добро пожаловать",
+    "totalOrders": "Всего заказов",
+    "totalProducts": "Всего товаров",
+    "totalUsers": "Всего пользователей",
+    "recentOrders": "Последние заказы",
+    "recentProducts": "Последние товары",
+    "recentUsers": "Последние пользователи"
+  },
+  "users": {
+    "title": "Пользователи",
+    "addUser": "Добавить пользователя",
+    "editUser": "Редактировать пользователя",
+    "deleteUser": "Удалить пользователя",
+    "userDetails": "Детали пользователя",
+    "role": "Роль",
+    "status": "Статус",
+    "lastLogin": "Последний вход",
+    "createdAt": "Дата создания"
+  },
+  "products": {
+    "title": "Товары",
+    "addProduct": "Добавить товар",
+    "editProduct": "Редактировать товар",
+    "deleteProduct": "Удалить товар",
+    "productDetails": "Детали товара",
+    "price": "Цена",
+    "stock": "Остаток",
+    "category": "Категория",
+    "sku": "Артикул",
+    "description": "Описание"
+  },
+  "orders": {
+    "title": "Заказы",
+    "orderDetails": "Детали заказа",
+    "status": "Статус заказа",
+    "customer": "Клиент",
+    "total": "Итого",
+    "date": "Дата",
+    "payment": "Оплата",
+    "shipping": "Доставка"
+  },
+  "settings": {
+    "title": "Настройки",
+    "general": "Общие",
+    "appearance": "Внешний вид",
+    "notifications": "Уведомления",
+    "security": "Безопасность",
+    "language": "Язык",
+    "theme": "Тема",
+    "darkMode": "Тёмная тема",
+    "lightMode": "Светлая тема"
+  },
+  "notifications": {
+    "title": "Уведомления",
+    "markAllRead": "Отметить все как прочитанные",
+    "noNotifications": "Нет новых уведомлений",
+    "newOrder": "Новый заказ",
+    "lowStock": "Низкий остаток",
+    "systemUpdate": "Обновление системы"
+  },
+  "errors": {
+    "notFound": "Страница не найдена",
+    "unauthorized": "Нет доступа",
+    "serverError": "Ошибка сервера",
+    "networkError": "Ошибка сети",
+    "validationError": "Ошибка валидации"
+  }
+} 
