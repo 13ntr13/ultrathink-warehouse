@@ -28,7 +28,7 @@ export default function Login() {
       await signIn(email, password)
       navigate('/')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to sign in')
+      setError('Invalid email or password')
     } finally {
       setLoading(false)
     }
@@ -59,37 +59,40 @@ export default function Login() {
             </Alert>
           )}
 
-          <form onSubmit={handleSubmit}>
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
             <TextField
+              margin="normal"
+              required
               fullWidth
-              label="Email"
-              type="email"
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              autoFocus
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              margin="normal"
-              required
-              autoFocus
             />
             <TextField
-              fullWidth
-              label="Password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
               margin="normal"
               required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <Button
-              fullWidth
               type="submit"
+              fullWidth
               variant="contained"
-              size="large"
-              disabled={loading}
-              sx={{ mt: 3 }}
+              sx={{ mt: 3, mb: 2 }}
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              Sign In
             </Button>
-          </form>
+          </Box>
         </CardContent>
       </Card>
     </Box>

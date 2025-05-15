@@ -7,20 +7,22 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src')
+      '@': path.resolve(__dirname, './src'),
+      '@components': path.resolve(__dirname, './src/components'),
+      '@layouts': path.resolve(__dirname, './src/layouts'),
+      '@pages': path.resolve(__dirname, './src/pages'),
+      '@lib': path.resolve(__dirname, './src/lib'),
+      '@routes': path.resolve(__dirname, './src/routes'),
+      '@ultrathink/shared-ui': path.resolve(__dirname, '../../packages/shared-ui/src')
     }
-  },
-  optimizeDeps: {
-    include: ['@ultrathink/shared-ui']
   },
   server: {
-    port: 3001, // Отличный от Vue приложения порт
-    proxy: {
-      '/api': {
-        target: 'http://localhost:5000',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
-      }
-    }
+    port: 3001,
+    open: true
+  },
+  build: {
+    sourcemap: true,
+    outDir: 'dist',
+    emptyOutDir: true
   }
 }) 

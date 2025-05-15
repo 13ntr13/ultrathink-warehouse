@@ -22,7 +22,20 @@ import {
   People as UsersIcon,
   Settings as SettingsIcon,
   Logout as LogoutIcon,
-  Widgets as WidgetsIcon
+  Widgets as WidgetsIcon,
+  ShoppingCart as ProductsIcon,
+  People as PeopleIcon,
+  ShoppingCart as ShoppingCartIcon,
+  Assessment as AssessmentIcon,
+  Notifications as NotificationsIcon,
+  Security as SecurityIcon,
+  History as HistoryIcon,
+  Payment as PaymentIcon,
+  Help as HelpIcon,
+  Extension as ExtensionIcon,
+  ImportExport as ImportExportIcon,
+  Person as PersonIcon,
+  Tune as TuneIcon
 } from '@mui/icons-material'
 import { useAuth } from '../lib/auth'
 
@@ -31,6 +44,23 @@ interface AdminLayoutProps {
 }
 
 const drawerWidth = 240
+
+const menuItems = [
+  { text: 'Dashboard', icon: <DashboardIcon />, path: '/' },
+  { text: 'Users', icon: <PeopleIcon />, path: '/users' },
+  { text: 'Products & Orders', icon: <ShoppingCartIcon />, path: '/products-orders' },
+  { text: 'Reports', icon: <AssessmentIcon />, path: '/reports' },
+  { text: 'Notifications', icon: <NotificationsIcon />, path: '/notifications' },
+  { text: 'Access Roles', icon: <SecurityIcon />, path: '/access-roles' },
+  { text: 'Audit Log', icon: <HistoryIcon />, path: '/audit-log' },
+  { text: 'Billing', icon: <PaymentIcon />, path: '/billing' },
+  { text: 'Help', icon: <HelpIcon />, path: '/help' },
+  { text: 'Integrations', icon: <ExtensionIcon />, path: '/integrations' },
+  { text: 'Import/Export', icon: <ImportExportIcon />, path: '/import-export' },
+  { text: 'Settings', icon: <SettingsIcon />, path: '/settings' },
+  { text: 'Profile', icon: <PersonIcon />, path: '/profile' },
+  { text: 'Sidebar Customization', icon: <TuneIcon />, path: '/sidebar-customization' },
+]
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -50,15 +80,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       console.error('Logout failed:', error)
     }
   }
-
-  const menuItems = [
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/' },
-    { text: 'Products', icon: <InventoryIcon />, path: '/products' },
-    { text: 'Orders', icon: <OrdersIcon />, path: '/orders' },
-    { text: 'Users', icon: <UsersIcon />, path: '/users' },
-    { text: 'Settings', icon: <SettingsIcon />, path: '/settings' },
-    { text: 'Shared Components', icon: <WidgetsIcon />, path: '/shared-components' }
-  ]
 
   const drawer = (
     <div>
@@ -100,7 +121,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         position="fixed"
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` }
+          ml: { sm: `${drawerWidth}px` },
+          zIndex: (theme) => theme.zIndex.drawer + 1
         }}
       >
         <Toolbar>
@@ -150,7 +172,17 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           }}
           open
         >
-          {drawer}
+          <Toolbar />
+          <Box sx={{ overflow: 'auto' }}>
+            <List>
+              {menuItems.map((item) => (
+                <ListItem button key={item.text} onClick={() => navigate(item.path)}>
+                  <ListItemIcon>{item.icon}</ListItemIcon>
+                  <ListItemText primary={item.text} />
+                </ListItem>
+              ))}
+            </List>
+          </Box>
         </Drawer>
       </Box>
       <Box
@@ -162,6 +194,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           mt: '64px'
         }}
       >
+        <Toolbar />
         {children || <Outlet />}
       </Box>
     </Box>
