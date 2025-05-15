@@ -98,7 +98,14 @@ export default function SidebarCustomization() {
   };
 
   return (
-    <Box>
+    <Box sx={{ p: 4 }}>
+      <Typography variant="h4" gutterBottom>
+        Настройка боковой панели
+      </Typography>
+      <Typography color="text.secondary">
+        Здесь вы можете настроить меню и элементы боковой панели.
+      </Typography>
+
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
         <Typography variant="h4" component="h1">
           Sidebar Customization

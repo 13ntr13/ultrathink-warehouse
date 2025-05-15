@@ -74,9 +74,12 @@ export default function ImportExport() {
   };
 
   return (
-    <Box>
-      <Typography variant="h4" component="h1" gutterBottom>
-        Import / Export
+    <Box sx={{ p: 4 }}>
+      <Typography variant="h4" gutterBottom>
+        Импорт / Экспорт
+      </Typography>
+      <Typography color="text.secondary">
+        Здесь вы можете импортировать или экспортировать данные склада.
       </Typography>
 
       <Grid container spacing={3}>
